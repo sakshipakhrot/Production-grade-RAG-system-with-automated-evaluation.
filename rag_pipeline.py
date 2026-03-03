@@ -1,7 +1,7 @@
 import os
-import tempfile # Added for memory-safe file handling
+import tempfile
 from dotenv import load_dotenv
-from langchain_community.document_loaders import PyPDFLoader # Changed from DirectoryLoader
+from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_groq import ChatGroq
 from langchain_huggingface import HuggingFaceEmbeddings
@@ -71,20 +71,15 @@ def setup_rag_chain():
     question_answer_chain = create_stuff_documents_chain(llm, prompt)
     rag_chain = create_retrieval_chain(retriever, question_answer_chain)
     
-    # Return the entire chain instead of just invoking it
     return rag_chain
 
 def get_answer(question: str) -> dict:
-    """
-    Modified to return a dictionary containing the answer 
-    and the retrieved context for evaluation purposes.
-    """
     chain = setup_rag_chain()
     
-    # The retrieval chain returns 'input', 'context', and 'answer'
     response = chain.invoke({"input": question})
     
     return {
         "answer": response["answer"],
         "contexts": [doc.page_content for doc in response["context"]] # Extract text from chunks
+
     }
