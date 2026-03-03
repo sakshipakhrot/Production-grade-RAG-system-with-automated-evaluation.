@@ -9,11 +9,11 @@ from ragas.metrics import (
     context_precision,
     context_recall
 )
-from ragas.run_config import RunConfig # Import RunConfig for rate limits
-from langchain_openai import ChatOpenAI # Using OpenAI wrapper to bypass the Groq bug
+from ragas.run_config import RunConfig
+from langchain_openai import ChatOpenAI
 from langchain_huggingface import HuggingFaceEmbeddings
 
-# Import your existing RAG chain setup
+
 from rag_pipeline import setup_rag_chain
 
 load_dotenv()
@@ -22,7 +22,7 @@ def run_evaluation():
     print("1. Initializing RAG Pipeline...")
     rag_chain = setup_rag_chain()
     
-    # 2. Define Test Cases
+    # 1. Define Test Cases
     questions = [
         "What is the improved F1-score when MobileNetV2 is used?",
         "What is the R2 score while using XGBoost regression model?"
@@ -43,7 +43,7 @@ def run_evaluation():
         retrieved_texts = [doc.page_content for doc in response["context"]]
         contexts.append(retrieved_texts)
 
-    # 3. Format data for RAGAS
+    # 2. Format data for RAGAS
     data = {
         "question": questions,
         "answer": answers,
@@ -53,7 +53,7 @@ def run_evaluation():
     dataset = Dataset.from_dict(data)
 
     print("3. Configuring Evaluation Models...")
-    # Point the OpenAI wrapper to Groq's servers using your Groq key
+    
     eval_llm = ChatOpenAI(
         api_key=os.environ.get("GROQ_API_KEY"),
         base_url="https://api.groq.com/openai/v1",
@@ -62,15 +62,15 @@ def run_evaluation():
     )
     eval_embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
-    # Define the config variable to prevent rate limiting
+    
     config = RunConfig(max_workers=2, timeout=60)
 
     print("4. Running RAGAS Evaluation...")
     
-    # Force Answer Relevancy to only ask for 1 generation (fixes the Groq n=1 error)
+    
     answer_relevancy.strictness = 1
 
-    # Pass the config variable into the evaluate function
+    
     result = evaluate(
         dataset=dataset,
         metrics=[
@@ -84,7 +84,7 @@ def run_evaluation():
         run_config=config 
     )
 
-    # 5. Output the results
+    
     print("\n=== Evaluation Results ===")
     df = result.to_pandas()
     
@@ -94,4 +94,5 @@ def run_evaluation():
     print("\nDetailed results saved to 'evaluation_results.csv'")
 
 if __name__ == "__main__":
+
     run_evaluation()
