@@ -19,9 +19,9 @@ This project implements an end-to-end RAG pipeline:
 
 
 .
-├── app.py # Application entry point
-├── rag_pipeline.py # Core RAG pipeline logic
-├── eval.py # Automated evaluation script
-├── evaluation.csv # Evaluation results & metrics
-├── requirements.txt
+├── app.py                # Application entry point
+├── rag_pipeline.py       # Core RAG pipeline logic
+├── eval.py               # Automated evaluation script
+├── evaluation.csv        # Evaluation results & metrics
+├── requirements.txt      # Project dependencies
 └── README.md
